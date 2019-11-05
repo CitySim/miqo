@@ -1,8 +1,9 @@
 import * as React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { SearchPage } from "./pages/SearchPage";
 import { ItemPage } from "./pages/db/ItemPage";
-import { CssBaseline } from "@material-ui/core";
+import { CssBaseline, BottomNavigation, BottomNavigationAction } from "@material-ui/core";
+import { Folder, Search } from "@material-ui/icons";
 
 export class MiqoApp extends React.Component {
 	constructor(props: {}) {
@@ -26,6 +27,10 @@ export class MiqoApp extends React.Component {
 					404
 				</Route>
 			</Switch>
+			<BottomNavigation showLabels>
+				<BottomNavigationAction component={Link} to={"/search"} label="Search" icon={<Search/>} />
+				<BottomNavigationAction component={Link} to={"/db"} label="DB" icon={<Folder/>} />
+			</BottomNavigation>
 		</Router>;
 	}
 }
