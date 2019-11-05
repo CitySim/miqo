@@ -1,4 +1,4 @@
-name: Node CI
+name: Webpack
 
 on: [push]
 
@@ -20,7 +20,7 @@ jobs:
       run: yarn run webpack
 
     - name: add nojekyll
-      run: touch ./out/.nojekyll
+      run: touch ./dist/.nojekyll
 
     - name: deploy
       uses: peaceiris/actions-gh-pages@v2.5.0
