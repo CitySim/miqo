@@ -21,6 +21,9 @@ jobs:
 
     - name: add nojekyll
       run: touch ./dist/.nojekyll
+      
+    - name: index.html
+      run: cp index.html dist/index.html
 
     - name: deploy
       uses: peaceiris/actions-gh-pages@v2.5.0
