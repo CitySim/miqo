@@ -1,64 +1,97 @@
 import * as React from "react";
 import { XivAPi, ISearchResult } from "../../xivapi/XivAPi";
-import { List, ListItem, Avatar, ListItemAvatar, ListItemText, TextField, BottomNavigation } from "@material-ui/core";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { List, ListItem, Avatar, ListItemAvatar, ListItemText, TextField, AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, IconButton, Dialog, Divider, Button, Slide } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { FilterList, Close } from "@material-ui/icons";
+import { TransitionProps } from "@material-ui/core/transitions";
 
-interface SearchPageState {
-	term: string;
-	search?: ISearchResult;
-}
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		root: {
+			paddingTop: 56,
+		},
+		title: {
+			flexGrow: 1,
+		},
+		searchInput: {
+			borderRadius: 0,
+			width: "100%",
+		}
+	}),
+);
 
-export class SearchPage extends React.Component<{}, SearchPageState> {
-	xivApi = new XivAPi();
+const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			term: "magicked bed",
-			search: undefined,
-		};
-	}
+export function SearchPage() {
+	const classes = useStyles();
+	const xivApi = new XivAPi();
+	const [ term, setTerm ] = useState("magicked bed");
+	const [ search, setSearch ] = useState<ISearchResult>();
+	const [ open, setOpen ] = React.useState(false);
 
-	componentDidMount() {
-		this.search();
-	}
+	useEffect(() => {
+		xivApi.search(term).then((result) => {
+			setSearch(result);
+		});
+	}, [ term ])
 
-	render() {
-		return <>
-			<TextField
-				label="Search"
-				margin="normal"
-				variant="filled"
-				value={this.state.term}
-				onChange={this.onSearch.bind(this)}
-			/>
+	return <div className={classes.root}>
+		<AppBar color="default">
+			<Toolbar>
+				<Typography className={classes.title} variant="h6" noWrap>
+					Search
+				</Typography>
+				<IconButton onClick={() => setOpen(true)}>
+					<FilterList/>
+				</IconButton>
+			</Toolbar>
+		</AppBar>
 
+		<TextField
+			label="Term"
+			variant="filled"
+			className={classes.searchInput}
+			value={term}
+			onChange={(e) => setTerm(e.target.value)}
+		/>
+
+		<Dialog fullScreen open={open} onClose={() => setOpen(false)} TransitionComponent={Transition}>
+			<AppBar position="relative">
+				<Toolbar>
+					<IconButton edge="start" color="inherit" onClick={() => setOpen(false)} aria-label="close">
+						<Close/>
+					</IconButton>
+					<Typography variant="h6" className={classes.title}>
+						Filter
+					</Typography>
+					<Button autoFocus color="inherit" onClick={() => setOpen(false)}>
+						save
+					</Button>
+				</Toolbar>
+			</AppBar>
 			<List>
-				{this.state.search && this.state.search.Results.map(result =>
-					<ListItem key={result.Url} button component={Link} to={"/db" + result.Url}>
-						<ListItemAvatar>
-							<Avatar src={this.xivApi.host + result.Icon}/>
-						</ListItemAvatar>
-						<ListItemText primary={result.Name} secondary={result.UrlType}/>
-					</ListItem>
-				)}
+				<ListItem button>
+					<ListItemText primary="Phone ringtone" secondary="Titania" />
+				</ListItem>
+				<Divider/>
+				<ListItem button>
+					<ListItemText primary="Default notification ringtone" secondary="Tethys" />
+				</ListItem>
 			</List>
-		</>;
-	}
+		</Dialog>
 
-	onSearch(event: React.ChangeEvent<HTMLInputElement>): void {
-		this.setState({
-			term: event.target.value,
-		});
-
-		this.search();
-	}
-
-	private search() {
-		this.xivApi.search(this.state.term).then((result) => {
-			this.setState({
-				search: result,
-			});
-		});
-	}
+		<List>
+			{search && search.Results.map(result =>
+				<ListItem key={result.Url} button component={Link} to={"/db" + result.Url}>
+					<ListItemAvatar>
+						<Avatar src={xivApi.host + result.Icon}/>
+					</ListItemAvatar>
+					<ListItemText primary={result.Name} secondary={result.UrlType}/>
+				</ListItem>
+			)}
+		</List>
+	</div>;
 }

@@ -5,6 +5,7 @@
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
+		"noUnusedLocals": true,
 		"sourceMap": true,
 		"module": "commonjs",
 		"target": "es6",
