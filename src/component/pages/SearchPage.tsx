@@ -28,7 +28,7 @@ const Transition = React.forwardRef<unknown, TransitionProps>(function Transitio
 export function SearchPage() {
 	const classes = useStyles();
 	const xivApi = new XivAPi();
-	const [ term, setTerm ] = useState("magicked bed");
+	const [ term, setTerm ] = useState("facet coat of gath");
 	const [ search, setSearch ] = useState<ISearchResult>();
 	const [ open, setOpen ] = React.useState(false);
 
@@ -87,7 +87,7 @@ export function SearchPage() {
 			{search && search.Results.map(result =>
 				<ListItem key={result.Url} button component={Link} to={"/db" + result.Url}>
 					<ListItemAvatar>
-						<Avatar src={xivApi.host + result.Icon}/>
+						<Avatar variant="rounded" src={xivApi.host + result.Icon}/>
 					</ListItemAvatar>
 					<ListItemText primary={result.Name} secondary={result.UrlType}/>
 				</ListItem>

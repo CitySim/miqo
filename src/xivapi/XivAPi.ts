@@ -37,4 +37,11 @@ export class XivAPi {
 		});
 		return await req.json();
 	}
+
+	async recipe(id: number): Promise<IItem> {
+		let req = await fetch(`${this.host}/recipe/${id}`, {
+			method: "get",
+		});
+		return await req.json();
+	}
 }
