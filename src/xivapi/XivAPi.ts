@@ -25,7 +25,7 @@ export class XivAPi {
 	host = "https://xivapi.com";
 
 	async search(term: string): Promise<ISearchResult> {
-		let req = await fetch(`${this.host}/search?string=${term}`, {
+		let req = await fetch(`${this.host}/search?indexes=item&string=${term}`, {
 			method: "get",
 		});
 		return await req.json();
