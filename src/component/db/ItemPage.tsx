@@ -96,7 +96,7 @@ export function ItemPage() {
 					if (state.recipe["AmountIngredient" + i]) {
 						return <ListItem key={i} button component={Link} to={"/db/item/" + state.recipe["ItemIngredient" + i].ID}>
 							<ListItemAvatar>
-								<Avatar variant="rounded" src={xivApi.host + state.recipe["ItemIngredient" + i].Icon}/>
+								<Avatar variant="square" src={xivApi.host + state.recipe["ItemIngredient" + i].Icon}/>
 							</ListItemAvatar>
 							<ListItemText>
 								{state.recipe["AmountIngredient" + i]} {state.recipe["ItemIngredient" + i].Name}

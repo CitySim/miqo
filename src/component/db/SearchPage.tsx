@@ -1,7 +1,7 @@
 import * as React from "react";
 import { XivAPi, ISearchResult } from "../../xivapi/XivAPi";
 import { List, ListItem, Avatar, ListItemAvatar, ListItemText, TextField, AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, IconButton, Dialog, Divider, Button, Slide } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FilterList, Close } from "@material-ui/icons";
 import { TransitionProps } from "@material-ui/core/transitions";
@@ -21,9 +21,9 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-//function useQuery() {
-//	return new URLSearchParams(useLocation().search);
-//}
+function useQuery() {
+	return new URLSearchParams(useLocation().search);
+}
 
 const Transition = React.forwardRef<unknown, TransitionProps>(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -31,8 +31,11 @@ const Transition = React.forwardRef<unknown, TransitionProps>(function Transitio
 
 export function SearchPage() {
 	const classes = useStyles();
+	const history = useHistory();
+	const query = useQuery();
 	const xivApi = new XivAPi();
-	const [ term, setTerm ] = useState("facet coat of gath");
+
+	const term = query.get("term") || "";
 	const [ search, setSearch ] = useState<ISearchResult>();
 	const [ open, setOpen ] = useState(false);
 
@@ -60,7 +63,10 @@ export function SearchPage() {
 			variant="filled"
 			className={classes.searchInput}
 			value={term}
-			onChange={(e) => setTerm(e.target.value)}
+			onChange={(e) => {
+				let newTerm = e.target.value;
+				history.replace(`/db/search?term=${newTerm}`);
+			}}
 		/>
 
 		<Dialog fullScreen open={open} onClose={() => setOpen(false)} TransitionComponent={Transition}>
@@ -92,7 +98,7 @@ export function SearchPage() {
 			{search && search.Results.map(result =>
 				<ListItem key={result.Url} button component={Link} to={"/db" + result.Url}>
 					<ListItemAvatar>
-						<Avatar variant="rounded" src={xivApi.host + result.Icon}/>
+						<Avatar variant="square" src={xivApi.host + result.Icon}/>
 					</ListItemAvatar>
 					<ListItemText primary={result.Name} secondary={result.UrlType}/>
 				</ListItem>
