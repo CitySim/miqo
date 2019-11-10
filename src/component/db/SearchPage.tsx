@@ -1,5 +1,5 @@
 import * as React from "react";
-import { XivAPi, ISearchResult } from "../../xivapi/XivAPi";
+import { XivAPi, XivApiSearchResult } from "../../lib";
 import { List, ListItem, Avatar, ListItemAvatar, ListItemText, TextField, AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, IconButton, Dialog, Divider, Button, Slide } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -36,11 +36,14 @@ export function SearchPage() {
 	const xivApi = new XivAPi();
 
 	const term = query.get("term") || "";
-	const [ search, setSearch ] = useState<ISearchResult>();
+	const [ search, setSearch ] = useState<XivApiSearchResult>();
 	const [ open, setOpen ] = useState(false);
 
 	useEffect(() => {
-		xivApi.search(term).then((result) => {
+		xivApi.search({
+			indexes: [ "item" ],
+			string: term,
+		}).then((result) => {
 			setSearch(result);
 		});
 	}, [ term ])

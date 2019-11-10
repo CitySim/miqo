@@ -5,8 +5,7 @@ import { makeStyles, createStyles, Theme, AppBar, Toolbar, Typography, Card, Ava
 import { Skeleton } from "@material-ui/lab";
 import { Add } from "@material-ui/icons";
 
-import { XivAPi } from "../../xivapi/XivAPi";
-import { IItem } from "../../xivapi/Item";
+import { miqoDb, XivAPi } from "../../lib";
 import { AddToListDialog } from "../list";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -25,12 +24,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ItemPageState {
-	item?: IItem;
+	item?: any;
 	recipe?: any;
 }
 
+const xivApi = new XivAPi();
 export function ItemPage() {
-	const xivApi = new XivAPi();
 	const { id } = useParams();
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
@@ -45,10 +44,10 @@ export function ItemPage() {
 	React.useEffect(() => {
 		if (id == null) return;
 
-		xivApi.item(parseInt(id)).then(item => {
+		miqoDb.getItemById(parseInt(id)).then(item => {
 			setState({ item })
 			if (item.GameContentLinks && item.GameContentLinks.Recipe && item.GameContentLinks.Recipe.ItemResult) {
-				xivApi.recipe(item.GameContentLinks.Recipe.ItemResult[0]).then(recipe => {
+				miqoDb.getRecipeById(item.GameContentLinks.Recipe.ItemResult[0]).then(recipe => {
 					setState({ item, recipe })
 				});
 			}

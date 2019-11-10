@@ -1,11 +1,12 @@
 import * as React from "react";
 import { HashRouter as Router, Switch, Route, Link, Redirect, useLocation } from "react-router-dom";
 import { CssBaseline, BottomNavigation, BottomNavigationAction, makeStyles, Theme, createStyles, Typography } from "@material-ui/core";
-import { Folder, Search } from "@material-ui/icons";
+import { Folder, Search, Info } from "@material-ui/icons";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 import * as Database from "./db";
 import * as List from "./list";
+import * as Miqo from "./miqo";
 import { darkTheme } from "./darkTheme";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -39,6 +40,7 @@ export function MiqoApp() {
 					<Route exact path="/db/item/:id"><Database.ItemPage/></Route>
 					<Route exact path="/list"><List.ListPage/></Route>
 					<Route exact path="/list/:id"><List.ListDetailPage/></Route>
+					<Route exact path="/miqo"><Miqo.MiqoPage/></Route>
 					<Route path="*">
 						<Typography variant="h2">Not Found</Typography>
 					</Route>
@@ -61,11 +63,14 @@ function Navigation() {
 		value = "db";
 	} else if (location.pathname.startsWith("/list")) {
 		value = "list";
+	} else if (location.pathname.startsWith("/miqo")) {
+		value = "miqo";
 	}
 
 	return <BottomNavigation showLabels className={classes.bottomNavigation} value={value}>
 		<BottomNavigationAction value="db" component={Link} to={"/db"} label="DB" icon={<Folder/>} />
 		<BottomNavigationAction value="search" component={Link} to={"/db/search"} label="Search" icon={<Search/>} />
 		<BottomNavigationAction value="list" component={Link} to={"/list"} label="Lists" icon={<Folder/>} />
+		<BottomNavigationAction value="miqo" component={Link} to={"/miqo"} label="Miqo" icon={<Info/>} />
 	</BottomNavigation>;
 }

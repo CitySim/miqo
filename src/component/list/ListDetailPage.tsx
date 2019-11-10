@@ -1,10 +1,9 @@
 import * as React from "react";
 import { AppBar, Toolbar, Typography, makeStyles, Theme, createStyles, List, ListItem, ListItemAvatar, Avatar, ListItemText } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { XivAPi } from "../../xivapi/XivAPi";
-import { IItem } from "../../xivapi/Item";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@material-ui/lab";
+import { XivAPi, miqoDb } from "../../lib";
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -31,7 +30,7 @@ const content = [
 
 interface Ingredient {
 	amount: number;
-	item: IItem;
+	item: any;
 }
 
 function getIngredients(recipe: any): Ingredient[] {
@@ -43,44 +42,29 @@ function getIngredients(recipe: any): Ingredient[] {
 	return result.filter(i => i.amount > 0);
 }
 
+const xivApi = new XivAPi();
+
 export function ListDetailPage() {
-	const xivApi = new XivAPi();
 	const classes = useStyles();
-	let [ items, setItems ] = useState<{ [id: string]: IItem }>({});
+	let [ items, setItems ] = useState<{ [id: string]: any }>({});
 	let [ recipes, setRecipes ] = useState<any>({});
 	let [ ingredients, setIngredients ] = useState<Ingredient[]>([]);
 
 	useEffect(() => {
-		async function wait(time: number): Promise<void> {
-			return new Promise(resolve => setTimeout(resolve, time));
+		async function loadItem(id: number): Promise<any> {
+			let item = await miqoDb.getItemById(id);
+			items = Object.assign(items, { [item.ID]: item });
+			setItems(items);
+			return item;
 		}
 
-		async function loadItem(id: number): Promise<IItem> {
-			if (items[id]) {
-				return items[id];
-			} else {
-				let item = await xivApi.item(id);
-				await wait(50)
-				if (item.ID) {
-					items = Object.assign(items, { [item.ID]: item });
-					setItems(items);
-				}
-				return item;
-			}
-		}
-
-		async function loadRecipe(item: IItem): Promise<any> {
+		async function loadRecipe(item: any): Promise<any> {
 			if (item.GameContentLinks && item.GameContentLinks.Recipe && item.GameContentLinks.Recipe.ItemResult) {
 				let recipeId = item.GameContentLinks.Recipe.ItemResult[0];
-				if (recipes[recipeId]) {
-					return recipes[recipeId];
-				} else {
-					let recipe = await xivApi.recipe(recipeId);
-					await wait(50)
-					recipes = Object.assign(recipes, { [recipe.ID]: recipe });
-					setRecipes(recipes);
-					return recipe;
-				}
+				let recipe = await miqoDb.getRecipeById(recipeId);
+				recipes = Object.assign(recipes, { [recipe.ID]: recipe });
+				setRecipes(recipes);
+				return recipe;
 			} else {
 				return undefined;
 			}
@@ -89,7 +73,7 @@ export function ListDetailPage() {
 		async function loadIngredients(ingredient: Ingredient) {
 			let { item } = ingredient;
 			let recipe = await loadRecipe(item);
-			console.log("> " + item.Name, recipe)
+			// console.log("> " + item.Name, recipe)
 			if (recipe == null) return;
 
 			let newIngredients = getIngredients(recipe);
@@ -97,10 +81,10 @@ export function ListDetailPage() {
 				newIngredient.item = await loadItem(newIngredient.item.ID as number);
 				let oldOne = ingredients.find(i => i.item.ID === newIngredient.item.ID);
 				if (oldOne) {
-					console.log("add: " + (ingredient.amount * newIngredient.amount) + " " + newIngredient.item.Name)
+					// console.log("add: " + (ingredient.amount * newIngredient.amount) + " " + newIngredient.item.Name)
 					oldOne.amount += ingredient.amount * newIngredient.amount;
 				} else {
-					console.log("new: " + (ingredient.amount * newIngredient.amount) + " " + newIngredient.item.Name)
+					// console.log("new: " + (ingredient.amount * newIngredient.amount) + " " + newIngredient.item.Name)
 					ingredients.push({
 						amount: ingredient.amount * newIngredient.amount,
 						item: newIngredient.item
@@ -114,7 +98,7 @@ export function ListDetailPage() {
 
 		async function load() {
 			for (let entry of content) {
-				let item = await xivApi.item(entry.id);
+				let item = await loadItem(entry.id);
 				if (item.ID) {
 					items = Object.assign(items, { [item.ID]: item });
 					setItems(items);
@@ -123,7 +107,7 @@ export function ListDetailPage() {
 						amount: 1,
 						item: item,
 					});
-					console.log("-------------------------------------------")
+					// console.log("-------------------------------------------")
 				}
 			}
 
