@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+}
+
+.workshop {
+    border: 1px solid black;
+    margin: 5px;
+    float: left;
+    width: 300px;
+}
+
+.config {
+    border: 1px solid black;
+    margin: 5px;
+    float: left;
+    width: 250px;
+}
+
+.add-item {
+    overflow: auto;
+}
