@@ -157,16 +157,16 @@ export class DataStore {
     async load() {
         const [
             reqMJICraftworksObject,
-            reqMJICraftworksObjectTheme,
             reqMJIItemPouch,
+            reqMJICraftworksObjectTheme,
         ] = await Promise.all([
             fetch("https://xivapi.com/MJICraftworksObject?columns=*"),
-            fetch("https://xivapi.com/MJICraftworksObjectTheme?columns=*"),
-            fetch("https://xivapi.com/MJIItemPouch?columns=*"),
+            //fetch("https://xivapi.com/MJIItemPouch?columns=*"),
+            //fetch("https://xivapi.com/MJICraftworksObjectTheme?columns=*"),
         ])
         
         this.MJICraftworksObject = (await reqMJICraftworksObject.json()).Results;
-        this.MJICraftworksObjectTheme = (await reqMJICraftworksObjectTheme.json()).Results;
-        this.MJIItemPouch = (await reqMJIItemPouch.json()).Results;
+        //this.MJIItemPouch = (await reqMJIItemPouch.json()).Results;
+        //this.MJICraftworksObjectTheme = (await reqMJICraftworksObjectTheme.json()).Results;
     }
 }

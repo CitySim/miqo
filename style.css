@@ -1,3 +1,7 @@
+:root {
+    font-family: sans-serif;
+}
+
 body {
     margin: 0;
 }
@@ -36,4 +40,11 @@ body {
 
 .add-item tr:hover {
     background: lightgray;
+}
+
+.add-item .label {
+    background-color: darkslategray;
+    color: white;
+    border-radius: 5px;
+    padding: 1px 4px;
 }
