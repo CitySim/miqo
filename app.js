@@ -304,6 +304,7 @@ class App {
         extraDiv.innerHTML = `
             <hr>
             <a href="https://github.com/CitySim/miqo" target="_blank">GitHub</a><br/>
+            Discord: Yue#0034
 
             <ul>
                 <li>this entire thing is a bit of a mess right now :)</li>
