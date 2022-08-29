@@ -9,6 +9,10 @@ body {
     width: 300px;
 }
 
+.workshop.active {
+    background: lightgray;
+}
+
 .config {
     border: 1px solid black;
     margin: 5px;
@@ -18,4 +22,18 @@ body {
 
 .add-item {
     overflow: auto;
+}
+
+.add-item table {
+    border-collapse: collapse;
+}
+
+.add-item thead {
+    position: sticky;
+    top: 0;
+    background: white;
+}
+
+.add-item tr:hover {
+    background: lightgray;
 }
