@@ -47,7 +47,7 @@ class App {
         let totalValue = 0;
 
         function renderTable() {
-            let offset = 10;
+            let offset = new Date(Date.UTC(2022, 8, 1, 8)).getHours();
             let out = "";
 
             const queue = this.store.config.workshops[workshop].queue;
