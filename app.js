@@ -162,14 +162,11 @@ class App {
             31, // Island Silver Ore
         ];
 
-        function renderMaterial(id, item) {
-            const icon = id === 0 ? "/i/025000/025026_hr1.png" : item.Item.IconHD;
-            const name = id === 0 ? "Island Palm Leaf" : item.Item.Name;
-
+        function renderMaterial(item) {
             return `
-                <img src="https://xivapi.com/${icon}" style="height: 1em;"/>
-                ${name ?? ""}
-                ${materialGranary.includes(id) ? `<span class="label">G</span>` : ""}
+                <img src="https://xivapi.com/${item.Item.IconHD}" style="height: 1em;"/>
+                ${item.Item.Name ?? ""}
+                ${materialGranary.includes(item.id) ? `<span class="label">G</span>` : ""}
                 ${item?.Category.ID === 4 ? `<span class="label">P</span>` : ""}
                 ${item?.Category.ID === 5 ? `<span class="label">L</span>` : ""}
             `
@@ -188,7 +185,6 @@ class App {
                     <th>Base Value</th>
                     <th>Final Value</th>
                     <th>Value / Hour (v)</th>
-                    <th>Material</th>
                     <th>Material</th>
                     <th>Material</th>
                     <th>Material</th>
@@ -232,25 +228,19 @@ class App {
                                 <td>
                                     ${item.Amount0 > 0 ? `
                                         ${item.Amount0}
-                                        ${renderMaterial.bind(this)(item.Material0TargetID, item.Material0)}
+                                        ${renderMaterial.bind(this)(item.Material0)}
                                     `: ""}
                                 </td>
                                 <td>
                                     ${item.Amount1 > 0 ? `
                                         ${item.Amount1}
-                                        ${renderMaterial.bind(this)(item.Material1TargetID, item.Material1)}
+                                        ${renderMaterial.bind(this)(item.Material1)}
                                     `: ""}
                                 </td>
                                 <td>
                                     ${item.Amount2 > 0 ? `
                                         ${item.Amount2}
-                                        ${renderMaterial.bind(this)(item.Material2TargetID, item.Material2)}
-                                    `: ""}
-                                </td>
-                                <td>
-                                    ${item.Amount3 > 0 ? `
-                                        ${item.Amount3}
-                                        ${renderMaterial.bind(this)(item.Material3TargetID, item.Material3)}
+                                        ${renderMaterial.bind(this)(item.Material2)}
                                     `: ""}
                                 </td>
                             </tr>
