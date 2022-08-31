@@ -4,7 +4,7 @@ import { calculateItemValue } from "../lib";
 import { configSlice, useAppDispatch, useAppSelector } from "../redux";
 
 const WorkshopContainer = styled.div`
-	border: 1px solid black;
+	border: 1px solid #444444;
 	margin: 5px;
 	float: left;
 	width: 300px;
@@ -42,7 +42,7 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 				dispatch(configSlice.actions.setActiveWorkshop(workshop));
 			}}
 			style={{
-				background: config.activeWorkshop === workshop ? "lightgray" : undefined,
+				background: config.activeWorkshop === workshop ? "#222222" : undefined,
 			}}
 		>
 			Workshop {workshop + 1}

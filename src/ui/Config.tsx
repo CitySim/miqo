@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { configSlice, useAppDispatch, useAppSelector } from "../redux";
 import { ItemSelect } from "./ItemSelect";
 
