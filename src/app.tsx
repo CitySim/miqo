@@ -6,8 +6,12 @@ import { store } from "./redux";
 import { xivSlice } from "./redux/xivSlice";
 
 const root = ReactDOM.createRoot(document.getElementById("app-root"));
-root.render(<Provider store={store}><AppRoot/></Provider>);
+root.render(
+	<Provider store={store}>
+		<AppRoot />
+	</Provider>
+);
 
 fetch("https://xivapi.com/MJICraftworksObject?columns=*")
-    .then(res => res.json())
-    .then(res => store.dispatch(xivSlice.actions.setMJICraftworksObject(res.Results)));
+	.then((res) => res.json())
+	.then((res) => store.dispatch(xivSlice.actions.setMJICraftworksObject(res.Results)));
