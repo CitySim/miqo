@@ -137,14 +137,17 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		cell: (props) => props.getValue().toFixed(2),
 	}),
 	columnHelper.accessor((r) => r.material0, {
+		id: "material0",
 		header: "Material",
 		cell: MaterialCell,
 	}),
 	columnHelper.accessor((r) => r.material1, {
+		id: "material1",
 		header: "Material",
 		cell: MaterialCell,
 	}),
 	columnHelper.accessor((r) => r.material2, {
+		id: "material2",
 		header: "Material",
 		cell: MaterialCell,
 	}),
