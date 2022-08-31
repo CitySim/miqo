@@ -183,7 +183,7 @@ const Material: React.FC<{ item: any }> = function (props) {
     return <>
         <img src={`https://xivapi.com/${item.Item.IconHD}`} style={{ height: "1em" }}/>
         &nbsp;
-        {materialGranary.includes(item.id) ? <Label>G</Label> : null}
+        {materialGranary.includes(item.ID) ? <Label>G</Label> : null}
         {item?.Category.ID === 4 ? <Label>P</Label> : null}
         {item?.Category.ID === 5 ? <Label>L</Label> : null}
         &nbsp;
