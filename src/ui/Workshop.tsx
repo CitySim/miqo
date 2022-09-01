@@ -47,7 +47,12 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 		>
 			Workshop {workshop + 1}
 			Rank
-			<select value={config.workshops[workshop].rank}>
+			<select
+				value={config.workshops[workshop].rank}
+				onChange={(e) => {
+					dispatch(configSlice.actions.setWorkshopRank({ workshop, rank: parseInt(e.target.value) }));
+				}}
+			>
 				<option value="0"></option>
 				<option value="1">1</option>
 				<option value="2">2</option>
@@ -77,7 +82,7 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 							if (item != null) previousItem = item;
 
 							return (
-								<tr>
+								<tr key={hour}>
 									<td>{timeDisplay}</td>
 									{item != null ? (
 										<td rowSpan={item.CraftingTime} style={{ border: "1px solid black" }}>

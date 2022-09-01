@@ -19,7 +19,9 @@ export const ItemSelect: React.FC<ItemSelectProps> = function ItemSelect(props) 
 		>
 			<option value="0"></option>
 			{items.map((item) => (
-				<option value={item.ID}>{item.Item.Name}</option>
+				<option key={item.ID} value={item.ID}>
+					{item.Item.Name}
+				</option>
 			))}
 		</select>
 	);

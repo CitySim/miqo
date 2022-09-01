@@ -36,6 +36,9 @@ export const configSlice = createSlice({
 		setActiveWorkshop(state, action: PayloadAction<number>) {
 			state.activeWorkshop = action.payload;
 		},
+		setWorkshopRank(state, action: PayloadAction<{ workshop: number; rank: number }>) {
+			state.workshops[action.payload.workshop].rank = action.payload.rank;
+		},
 		setVeryHighItem(state, action: PayloadAction<{ index: number; id: number }>) {
 			state.veryHighItems[action.payload.index] = action.payload.id;
 		},

@@ -19,13 +19,6 @@ export const AddItem: React.FC = function AddItem() {
 	const previousItem = queue[queue.length - 1];
 
 	const [goodItems] = findItems(workshop);
-	goodItems.sort((a, b) => {
-		const [valueA] = calculateItemValue({ workshop, item: a, previousItem });
-		const [valueB] = calculateItemValue({ workshop, item: b, previousItem });
-
-		return valueB / b.CraftingTime - valueA / a.CraftingTime;
-	});
-
 	const gridItems = goodItems.map((item) => {
 		const [value, efficiencyBonus] = calculateItemValue({
 			workshop,
