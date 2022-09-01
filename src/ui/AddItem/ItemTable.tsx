@@ -14,22 +14,23 @@ import {
 } from "@tanstack/react-table";
 
 import styled, { css } from "styled-components";
-import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
+import { configSlice, MJICraftworksObject, useAppDispatch, useAppSelector } from "../../redux";
+import { MJIItemPouch } from "../../redux/xivSlice";
 
-interface GridRow {
+export interface GridRow {
 	popularity: number;
 	efficiencyBonus: boolean;
 	value: number;
 	hourValue: number;
-	item: any;
+	item: MJICraftworksObject;
 
-	material0: { amount: number; item: number };
-	material1: { amount: number; item: number };
-	material2: { amount: number; item: number };
-	material3: { amount: number; item: number };
+	material0: { amount: number; item?: MJIItemPouch };
+	material1: { amount: number; item?: MJIItemPouch };
+	material2: { amount: number; item?: MJIItemPouch };
+	material3: { amount: number; item?: MJIItemPouch };
 }
 
-const popName = {
+const popName: Record<number, string> = {
 	1: "Very High",
 	2: "High",
 	3: "Average",
@@ -46,7 +47,7 @@ const ItemCell: React.FC<CellContext<GridRow, unknown>> = function ItemCell(prop
 
 	return (
 		<>
-			<img src={`https://xivapi.com/${item.Item.IconHD}`} style={{ height: "1em" }} />
+			<img src={`https://xivapi.com/${item.Item.Icon}`} style={{ height: "1em" }} />
 			&nbsp;
 			{item.Item.Name}
 		</>
@@ -55,7 +56,7 @@ const ItemCell: React.FC<CellContext<GridRow, unknown>> = function ItemCell(prop
 
 const MaterialCell: React.FC<CellContext<GridRow, GridRow["material0"]>> = function MaterialCell(props) {
 	const material = props.getValue();
-	if (material.amount === 0) return <React.Fragment />;
+	if (material.amount === 0 || material.item == null) return <React.Fragment />;
 
 	return (
 		<>
@@ -74,12 +75,12 @@ const materialGranary = [
 	31, // Island Silver Ore
 ];
 
-const Material: React.FC<{ item: any }> = function (props) {
+const Material: React.FC<{ item: MJIItemPouch }> = function (props) {
 	const { item } = props;
 
 	return (
 		<>
-			<img src={`https://xivapi.com/${item.Item.IconHD}`} style={{ height: "1em" }} />
+			<img src={`https://xivapi.com/${item.Item.Icon}`} style={{ height: "1em" }} />
 			&nbsp;
 			{materialGranary.includes(item.ID) ? <Label>G</Label> : null}
 			{item?.Category.ID === 4 ? <Label>P</Label> : null}
@@ -117,12 +118,12 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		size: 170,
 		filterFn: "includesString",
 	}),
-	columnHelper.accessor((r) => r.efficiencyBonus, {
-		header: "Bonus",
-		cell: (props) => (props.getValue() ? "✓" : ""),
-		size: 60,
-		enableColumnFilter: false,
-	}),
+	// columnHelper.accessor((r) => r.efficiencyBonus, {
+	// 	header: "Bonus",
+	// 	cell: (props) => (props.getValue() ? "✓" : ""),
+	// 	size: 60,
+	// 	enableColumnFilter: false,
+	// }),
 	columnHelper.accessor((r) => r.item.CraftingTime, {
 		id: "time",
 		header: "Time",

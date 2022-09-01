@@ -5,7 +5,10 @@ import { Provider } from "react-redux";
 import { store } from "./redux";
 import { xivSlice } from "./redux/xivSlice";
 
-const root = ReactDOM.createRoot(document.getElementById("app-root"));
+const rootEl = document.getElementById("app-root");
+if (rootEl == null) throw new Error("no root el");
+
+const root = ReactDOM.createRoot(rootEl);
 root.render(
 	<Provider store={store}>
 		<AppRoot />

@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { calculateItemValue, findItems } from "../../lib";
 import { getPop, useAppSelector } from "../../redux";
 
-import { ItemTable } from "./ItemTable";
+import { GridRow, ItemTable } from "./ItemTable";
 
 export const AddItem: React.FC = function AddItem() {
 	const config = useAppSelector((s) => s.config);
@@ -19,18 +19,19 @@ export const AddItem: React.FC = function AddItem() {
 	const previousItem = queue[queue.length - 1];
 
 	const [goodItems] = findItems(workshop);
-	const gridItems = goodItems.map((item) => {
-		const [value, efficiencyBonus] = calculateItemValue({
+	const gridItems = goodItems.map<GridRow>((item) => {
+		const calculation = calculateItemValue({
 			workshop,
 			item,
 			previousItem,
+			groove: 0,
 		});
 
 		return {
 			popularity: popMatrix[item.ID],
-			efficiencyBonus: efficiencyBonus,
-			value: value,
-			hourValue: value / item.CraftingTime,
+			efficiencyBonus: calculation.efficiencyBonus,
+			value: calculation.valueTotal,
+			hourValue: calculation.valueTotal / item.CraftingTime,
 			item: item,
 
 			material0: { amount: item.Amount0, item: item.Material0 },

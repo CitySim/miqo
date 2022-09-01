@@ -1,16 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import { calculateItemValue } from "../lib";
-import { configSlice, useAppDispatch, useAppSelector } from "../redux";
+import { calculateItemValue, ItemCalculation } from "../../lib";
+import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
+import { MJICraftworksObject } from "../../redux/xivSlice";
+import { TimelineItem } from "./TImelineItem";
 
 const WorkshopContainer = styled.div`
 	border: 1px solid #444444;
 	margin: 5px;
 	float: left;
-	width: 300px;
+	width: 400px;
 `;
 
-interface WorkshopProps {
+export interface WorkshopProps {
 	/**
 	 * Which workshop, 0-2
 	 */
@@ -27,14 +29,14 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 	let offset = new Date(Date.UTC(2022, 8, 1, 8)).getHours();
 	const queue = config.workshops[workshop].queue;
 
-	const itemByHour = {};
+	const itemByHour: Record<string, MJICraftworksObject> = {};
 	let itemByHourOffset = 0;
 	queue.forEach((item) => {
 		itemByHour[itemByHourOffset] = item;
 		itemByHourOffset += item.CraftingTime;
 	});
 
-	let previousItem;
+	let previousItem: MJICraftworksObject;
 
 	return (
 		<WorkshopContainer
@@ -58,49 +60,32 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 				<option value="2">2</option>
 				<option value="3">3</option>
 			</select>
-			<table>
+			<table style={{ width: "100%" }}>
 				<tbody>
 					{Array(24)
 						.fill(1)
 						.map((_, hour) => {
 							const timeDisplay = offset + hour >= 24 ? `${offset + hour - 24}:00` : `${offset + hour}:00`;
-							const item = itemByHour[hour];
 
-							let value = 0;
-							let efficiencyBonus = false;
+							const item = itemByHour[hour];
+							let calculation: ItemCalculation | undefined;
 							if (item != null) {
-								[value, efficiencyBonus] = calculateItemValue({
+								calculation = calculateItemValue({
 									workshop,
 									item,
 									previousItem,
+									groove: 0,
 								});
-								totalValue += value;
 							}
-
-							const isLast = queue[queue.length - 1] === item;
 
 							if (item != null) previousItem = item;
 
 							return (
 								<tr key={hour}>
-									<td>{timeDisplay}</td>
-									{item != null ? (
-										<td rowSpan={item.CraftingTime} style={{ border: "1px solid black" }}>
-											<img src={`https://xivapi.com/${item.Item.IconHD}`} style={{ height: "1em" }} />
-											{item.Item.Name}
-											{isLast ? (
-												<button onClick={() => dispatch(configSlice.actions.removeFromQueue(workshop))}>x</button>
-											) : (
-												""
-											)}
-											<br />
-											{item.Theme0?.Name ?? ""}
-											{item.Theme1 != null ? " / " : ""}
-											{item.Theme1?.Name ?? ""}
-											<br />
-											{efficiencyBonus ? "Efficiency Bonus!" : "No Bonus!"}
-											<br />
-											Value {value}
+									<td style={{ height: 27 }}>{timeDisplay}</td>
+									{calculation != null ? (
+										<td rowSpan={item.CraftingTime} style={{ height: 27 * item.CraftingTime }}>
+											<TimelineItem calculation={calculation} />
 										</td>
 									) : (
 										""

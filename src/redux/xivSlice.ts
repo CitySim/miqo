@@ -1,7 +1,51 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export interface MJICraftworksObject {
+	ID: number;
+	CraftingTime: number;
+	Value: number;
+
+	Theme0TargetID: number;
+	Theme0: {
+		Name: string;
+	};
+	Theme1TargetID: number;
+	Theme1: {
+		Name: string;
+	};
+
+	Amount0: number;
+	Material0?: MJIItemPouch;
+	Amount1: number;
+	Material1?: MJIItemPouch;
+	Amount2: number;
+	Material2?: MJIItemPouch;
+	Amount3: number;
+	Material3?: MJIItemPouch;
+
+	Item: Item;
+}
+
+export interface MJICraftworksObjectTheme {}
+
+export interface MJIItemPouch {
+	ID: number;
+	Category: {
+		ID: number;
+	};
+	Item: Item;
+}
+
+export interface Item {
+	ID: number;
+	Icon: string;
+	IconHD: string;
+	IconID: number;
+	Name: string;
+}
+
 export interface XivState {
-	MJICraftworksObject: any[];
+	MJICraftworksObject: MJICraftworksObject[];
 	MJICraftWorksPopularityType: Record<string, number>;
 	MJICraftWorksRankRatio: Record<string, number>;
 	MJICraftWorksSupplyDefine: Array<{
@@ -461,7 +505,7 @@ export const xivSlice = createSlice({
 	name: "xiv",
 	initialState: initialState,
 	reducers: {
-		setMJICraftworksObject(state, action: PayloadAction<any[]>) {
+		setMJICraftworksObject(state, action: PayloadAction<MJICraftworksObject[]>) {
 			state.MJICraftworksObject = action.payload;
 		},
 	},

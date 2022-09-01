@@ -1,17 +1,20 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { MJICraftworksObject } from "./xivSlice";
 
 export interface CounterState {
 	activeWorkshop?: number;
 	//popularity: number;
 	veryHighItems: number[];
-	workshops: Array<{
-		rank: number;
-		queue: any[];
-	}>;
+	workshops: WorkshopConfig[];
+}
+
+export interface WorkshopConfig {
+	rank: number;
+	queue: MJICraftworksObject[];
 }
 
 const initialState: CounterState = {
-	//popularity: 0,
+	//popularity: 83,
 	veryHighItems: [4, 7, 12],
 	workshops: [
 		{
@@ -49,7 +52,7 @@ export const configSlice = createSlice({
 			const queue = state.workshops[action.payload].queue;
 			queue.splice(queue.length - 1, 1);
 		},
-		addToQueue(state, action: PayloadAction<{ workshop: number; item: any }>) {
+		addToQueue(state, action: PayloadAction<{ workshop: number; item: MJICraftworksObject }>) {
 			state.workshops[action.payload.workshop].queue.push(action.payload.item);
 		},
 	},
