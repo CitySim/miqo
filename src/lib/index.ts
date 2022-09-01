@@ -103,7 +103,7 @@ export function calculateItemValue(params: {
 function hasEfficiencyBonus(item: MJICraftworksObject, previousItem?: MJICraftworksObject) {
 	const activeTheme: number[] = [];
 	if (previousItem != null && previousItem.Theme0TargetID !== 0) activeTheme.push(previousItem.Theme0TargetID);
-	if (previousItem != null && previousItem.Theme0TargetID !== 0) activeTheme.push(previousItem.Theme0TargetID);
+	if (previousItem != null && previousItem.Theme1TargetID !== 0) activeTheme.push(previousItem.Theme1TargetID);
 
 	return (
 		// must be a different item
