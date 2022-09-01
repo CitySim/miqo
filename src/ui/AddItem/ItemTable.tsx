@@ -7,6 +7,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	getExpandedRowModel,
+	getFilteredRowModel,
 	getGroupedRowModel,
 	getSortedRowModel,
 	useReactTable,
@@ -104,25 +105,29 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		cell: ItemCell,
 		size: 300,
 	}),
-	columnHelper.accessor((r) => r.item.Theme0?.Name, {
+	columnHelper.accessor((r) => r.item.Theme0?.Name ?? "", {
 		id: "theme0",
 		header: "Theme",
 		size: 170,
+		filterFn: "includesString",
 	}),
-	columnHelper.accessor((r) => r.item.Theme1?.Name, {
+	columnHelper.accessor((r) => r.item.Theme1?.Name ?? "", {
 		id: "theme1",
 		header: "Theme",
 		size: 170,
+		filterFn: "includesString",
 	}),
 	columnHelper.accessor((r) => r.efficiencyBonus, {
 		header: "Bonus",
 		cell: (props) => (props.getValue() ? "✓" : ""),
 		size: 60,
+		enableColumnFilter: false,
 	}),
 	columnHelper.accessor((r) => r.item.CraftingTime, {
 		id: "time",
 		header: "Time",
 		size: 60,
+		filterFn: "weakEquals",
 	}),
 	columnHelper.accessor((r) => r.popularity, {
 		id: "popularity",
@@ -131,17 +136,20 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		// popularity is internally "inverted", 1 for "Very High" and bigger numbers for less popular items
 		invertSorting: true,
 		size: 90,
+		filterFn: "weakEquals",
 	}),
 	columnHelper.accessor((r) => r.item.Value, {
 		id: "value",
 		header: "Base",
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 60,
 	}),
 	columnHelper.accessor((r) => r.value, {
 		id: "valueFinal",
 		header: "Final",
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 60,
 	}),
 	columnHelper.accessor((r) => r.hourValue, {
@@ -149,6 +157,7 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		header: "/h",
 		cell: (props) => props.getValue().toFixed(2),
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 60,
 	}),
 	columnHelper.accessor((r) => r.material0, {
@@ -157,6 +166,7 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		cell: MaterialCell,
 		enableSorting: false,
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 250,
 	}),
 	columnHelper.accessor((r) => r.material1, {
@@ -165,6 +175,7 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		cell: MaterialCell,
 		enableSorting: false,
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 250,
 	}),
 	columnHelper.accessor((r) => r.material2, {
@@ -173,6 +184,7 @@ const defaultColumns: ColumnDef<GridRow, any>[] = [
 		cell: MaterialCell,
 		enableSorting: false,
 		enableGrouping: false,
+		enableColumnFilter: false,
 		size: 250,
 	}),
 ];
@@ -266,6 +278,7 @@ export const ItemTable: React.FC<ItemTableProps> = function ItemTable(props) {
 		},
 		columnResizeMode: "onEnd",
 		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
 		getGroupedRowModel: getGroupedRowModel(),
 		getExpandedRowModel: getExpandedRowModel(),
@@ -289,61 +302,97 @@ export const ItemTable: React.FC<ItemTableProps> = function ItemTable(props) {
 								}}
 								colSpan={header.colSpan}
 							>
-								<div
-									style={{ height: "100%", width: "100%", display: "flex", flexDirection: "row", whiteSpace: "nowrap" }}
-								>
-									<div
-										style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}
-										onClick={header.column.getToggleSortingHandler()}
-									>
-										{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-									</div>
-									<div>
-										{/* sort indicator */}
-										{header.column.getIsSorted() ? (
-											<>
-												{{
-													asc: <span onClick={header.column.getToggleSortingHandler()}>🔼</span>,
-													desc: <span onClick={header.column.getToggleSortingHandler()}>🔽</span>,
-												}[header.column.getIsSorted() as string] ?? null}
-												{/* show index if we're sorting by more then one column */}
-												{table.getState().sorting.length > 1 ? <sup>{header.column.getSortIndex() + 1}</sup> : null}
-											</>
-										) : null}
-										{/* group */}
-										{header.column.getCanGroup() ? (
-											<span
-												onClick={header.column.getToggleGroupingHandler()}
+								{header.isPlaceholder ? null : (
+									<div style={{ width: "100%", display: "flex", flexDirection: "row", whiteSpace: "nowrap" }}>
+										<div
+											style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}
+											onClick={header.column.getToggleSortingHandler()}
+										>
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+										</div>
+										<div>
+											{/* sort indicator */}
+											{header.column.getIsSorted() ? (
+												<>
+													{{
+														asc: <span onClick={header.column.getToggleSortingHandler()}>🔼</span>,
+														desc: <span onClick={header.column.getToggleSortingHandler()}>🔽</span>,
+													}[header.column.getIsSorted() as string] ?? null}
+													{/* show index if we're sorting by more then one column */}
+													{table.getState().sorting.length > 1 ? <sup>{header.column.getSortIndex() + 1}</sup> : null}
+												</>
+											) : null}
+											{/* group */}
+											{header.column.getCanGroup() ? (
+												<span
+													onClick={header.column.getToggleGroupingHandler()}
+													style={{
+														cursor: "pointer",
+													}}
+												>
+													{header.column.getIsGrouped() ? (
+														<>
+															❌<sup>{header.column.getGroupedIndex()}</sup>
+														</>
+													) : (
+														`⏏️`
+													)}
+												</span>
+											) : null}
+											{/* resize handle */}
+											<ResizeHandle
+												onMouseDown={header.getResizeHandler()}
+												onTouchStart={header.getResizeHandler()}
+												isResizing={header.column.getIsResizing()}
 												style={{
-													cursor: "pointer",
+													transform: header.column.getIsResizing()
+														? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
+														: undefined,
 												}}
-											>
-												{header.column.getIsGrouped() ? (
-													<>
-														❌<sup>{header.column.getGroupedIndex()}</sup>
-													</>
-												) : (
-													`⏏️`
-												)}
-											</span>
-										) : null}
-										{/* resize handle */}
-										<ResizeHandle
-											onMouseDown={header.getResizeHandler()}
-											onTouchStart={header.getResizeHandler()}
-											isResizing={header.column.getIsResizing()}
-											style={{
-												transform: header.column.getIsResizing()
-													? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
-													: undefined,
-											}}
-										/>
+											/>
+										</div>
 									</div>
-								</div>
+								)}
 							</th>
 						))}
 					</tr>
 				))}
+				<tr>
+					{table
+						.getHeaderGroups()
+						.slice(-1)[0]
+						.headers.map((header) => (
+							<th key={header.id}>
+								{header.column.getCanFilter() ? (
+									header.column.id === "popularity" ? (
+										<select
+											value={(header.column.getFilterValue() ?? "") as string}
+											onChange={(e) => header.column.setFilterValue(e.target.value)}
+											style={{
+												width: "100%",
+											}}
+										>
+											<option></option>
+											<option value="1">Very High</option>
+											<option value="2">High</option>
+											<option value="3">Average</option>
+											<option value="4">Low</option>
+										</select>
+									) : (
+										<input
+											type="text"
+											value={(header.column.getFilterValue() ?? "") as string}
+											onChange={(e) => header.column.setFilterValue(e.target.value)}
+											placeholder={`filter...`}
+											style={{
+												width: "100%",
+											}}
+										/>
+									)
+								) : null}
+							</th>
+						))}
+				</tr>
 			</thead>
 			<tbody>
 				{table.getRowModel().rows.map((row) => (
