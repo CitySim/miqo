@@ -24,11 +24,12 @@ const Panel = styled.div`
 `;
 
 export interface TimelineItemProps {
+	workshop: number;
 	calculation: ItemCalculation;
 }
 
 export const TimelineItem: React.FC<TimelineItemProps> = function TimelineItem(props) {
-	const { calculation } = props;
+	const { calculation, workshop } = props;
 	const { item, efficiencyBonus, valueTotal, popularity, groove } = calculation;
 	const dispatch = useAppDispatch();
 
@@ -42,7 +43,9 @@ export const TimelineItem: React.FC<TimelineItemProps> = function TimelineItem(p
 					{item.CraftingTime}h &nbsp;&mdash;&nbsp;
 					{popName[popularity]}
 				</small>
-				{/* <button onClick={() => dispatch(configSlice.actions.removeFromQueue(0))}>x</button> */}
+				<button style={{ float: "right" }} onClick={() => dispatch(configSlice.actions.removeFromQueue(workshop))}>
+					x
+				</button>
 			</div>
 			<div style={{ flex: 1, padding: "4px 0" }}>
 				<div style={{ display: "flex" }}>

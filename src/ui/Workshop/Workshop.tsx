@@ -82,10 +82,10 @@ export const Workshop: React.FC<WorkshopProps> = function Workshop(props) {
 
 							return (
 								<tr key={hour}>
-									<td style={{ height: 27 }}>{timeDisplay}</td>
+									<td style={{ height: 27, width: 50 }}>{timeDisplay}</td>
 									{calculation != null ? (
 										<td rowSpan={item.CraftingTime} style={{ height: 27 * item.CraftingTime }}>
-											<TimelineItem calculation={calculation} />
+											<TimelineItem calculation={calculation} workshop={workshop} />
 										</td>
 									) : (
 										""
