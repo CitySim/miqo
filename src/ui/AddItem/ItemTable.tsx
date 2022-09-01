@@ -6,11 +6,13 @@ import {
 	createColumnHelper,
 	flexRender,
 	getCoreRowModel,
+	getExpandedRowModel,
+	getGroupedRowModel,
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
 
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
 
 interface GridRow {
@@ -96,82 +98,143 @@ const Label = styled.span`
 
 const columnHelper = createColumnHelper<GridRow>();
 const defaultColumns: ColumnDef<GridRow, any>[] = [
-	columnHelper.accessor((r) => r.item.Name, {
+	columnHelper.accessor((r) => r.item.Item.Name, {
 		id: "name",
-		enableSorting: true,
 		header: "Item",
 		cell: ItemCell,
+		size: 300,
 	}),
 	columnHelper.accessor((r) => r.item.Theme0?.Name, {
 		id: "theme0",
 		header: "Theme",
+		size: 170,
 	}),
 	columnHelper.accessor((r) => r.item.Theme1?.Name, {
 		id: "theme1",
 		header: "Theme",
+		size: 170,
 	}),
 	columnHelper.accessor((r) => r.efficiencyBonus, {
 		header: "Bonus",
 		cell: (props) => (props.getValue() ? "✓" : ""),
+		size: 60,
 	}),
 	columnHelper.accessor((r) => r.item.CraftingTime, {
 		id: "time",
 		header: "Time",
+		size: 60,
 	}),
 	columnHelper.accessor((r) => r.popularity, {
 		id: "popularity",
 		header: "Popularity",
 		cell: PopularityCell,
+		// popularity is internally "inverted", 1 for "Very High" and bigger numbers for less popular items
+		invertSorting: true,
+		size: 90,
 	}),
 	columnHelper.accessor((r) => r.item.Value, {
 		id: "value",
 		header: "Base",
+		enableGrouping: false,
+		size: 60,
 	}),
 	columnHelper.accessor((r) => r.value, {
 		id: "valueFinal",
 		header: "Final",
+		enableGrouping: false,
+		size: 60,
 	}),
 	columnHelper.accessor((r) => r.hourValue, {
 		id: "hourValue",
 		header: "/h",
 		cell: (props) => props.getValue().toFixed(2),
+		enableGrouping: false,
+		size: 60,
 	}),
 	columnHelper.accessor((r) => r.material0, {
 		id: "material0",
 		header: "Material",
 		cell: MaterialCell,
+		enableSorting: false,
+		enableGrouping: false,
+		size: 250,
 	}),
 	columnHelper.accessor((r) => r.material1, {
 		id: "material1",
 		header: "Material",
 		cell: MaterialCell,
+		enableSorting: false,
+		enableGrouping: false,
+		size: 250,
 	}),
 	columnHelper.accessor((r) => r.material2, {
 		id: "material2",
 		header: "Material",
 		cell: MaterialCell,
+		enableSorting: false,
+		enableGrouping: false,
+		size: 250,
 	}),
 ];
 
 const Table = styled.table`
 	margin: 0;
 	border-collapse: collapse;
+	table-layout: fixed;
 
 	& > thead {
 		position: sticky;
 		top: 0;
 		background: #222222;
+		z-index: 1;
 	}
 
 	& > thead > tr > th,
 	& > tbody > tr > td {
+		position: relative;
 		padding: 4px;
 		border: 1px solid #444444;
+	}
+
+	& > thead > tr > th {
+		user-select: none;
+	}
+
+	& > tbody > tr > td {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	& > tbody > tr:hover {
 		cursor: pointer;
 		background: #222222;
+	}
+`;
+
+const ResizeHandle = styled.div<{ isResizing: boolean }>`
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	width: 5px;
+	background: #666666;
+	cursor: col-resize;
+	user-select: none;
+	touch-action: none;
+	opacity: 0;
+	z-index: 2;
+
+	${(props) =>
+		props.isResizing
+			? css`
+					background: blue;
+					opacity: 1;
+			  `
+			: ""}
+
+	*:hover > & {
+		opacity: 1;
 	}
 `;
 
@@ -196,12 +259,24 @@ export const ItemTable: React.FC<ItemTableProps> = function ItemTable(props) {
 				},
 			],
 		},
+		defaultColumn: {
+			size: 200,
+			minSize: 60,
+			maxSize: 300,
+		},
+		columnResizeMode: "onEnd",
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
+		getGroupedRowModel: getGroupedRowModel(),
+		getExpandedRowModel: getExpandedRowModel(),
 	});
 
 	return (
-		<Table>
+		<Table
+			style={{
+				width: table.getCenterTotalSize(),
+			}}
+		>
 			<thead>
 				{table.getHeaderGroups().map((headerGroup) => (
 					<tr key={headerGroup.id}>
@@ -209,17 +284,62 @@ export const ItemTable: React.FC<ItemTableProps> = function ItemTable(props) {
 							<th
 								key={header.id}
 								style={{
+									width: header.getSize(),
 									cursor: header.column.getCanSort() ? "pointer" : undefined,
-									userSelect: header.column.getCanSort() ? "none" : undefined,
 								}}
-								onClick={header.column.getToggleSortingHandler()}
+								colSpan={header.colSpan}
 							>
-								{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-
-								{{
-									asc: " 🔼",
-									desc: " 🔽",
-								}[header.column.getIsSorted() as string] ?? null}
+								<div
+									style={{ height: "100%", width: "100%", display: "flex", flexDirection: "row", whiteSpace: "nowrap" }}
+								>
+									<div
+										style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}
+										onClick={header.column.getToggleSortingHandler()}
+									>
+										{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+									</div>
+									<div>
+										{/* sort indicator */}
+										{header.column.getIsSorted() ? (
+											<>
+												{{
+													asc: <span onClick={header.column.getToggleSortingHandler()}>🔼</span>,
+													desc: <span onClick={header.column.getToggleSortingHandler()}>🔽</span>,
+												}[header.column.getIsSorted() as string] ?? null}
+												{/* show index if we're sorting by more then one column */}
+												{table.getState().sorting.length > 1 ? <sup>{header.column.getSortIndex() + 1}</sup> : null}
+											</>
+										) : null}
+										{/* group */}
+										{header.column.getCanGroup() ? (
+											<span
+												onClick={header.column.getToggleGroupingHandler()}
+												style={{
+													cursor: "pointer",
+												}}
+											>
+												{header.column.getIsGrouped() ? (
+													<>
+														❌<sup>{header.column.getGroupedIndex()}</sup>
+													</>
+												) : (
+													`⏏️`
+												)}
+											</span>
+										) : null}
+										{/* resize handle */}
+										<ResizeHandle
+											onMouseDown={header.getResizeHandler()}
+											onTouchStart={header.getResizeHandler()}
+											isResizing={header.column.getIsResizing()}
+											style={{
+												transform: header.column.getIsResizing()
+													? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
+													: undefined,
+											}}
+										/>
+									</div>
+								</div>
 							</th>
 						))}
 					</tr>
@@ -229,10 +349,33 @@ export const ItemTable: React.FC<ItemTableProps> = function ItemTable(props) {
 				{table.getRowModel().rows.map((row) => (
 					<tr
 						key={row.id}
-						onClick={() => dispatch(configSlice.actions.addToQueue({ workshop, item: row.original.item }))}
+						onClick={() => {
+							if (row.getIsGrouped()) return;
+
+							dispatch(configSlice.actions.addToQueue({ workshop, item: row.original.item }));
+						}}
 					>
 						{row.getVisibleCells().map((cell) => (
-							<td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+							<td
+								key={cell.id}
+								onClick={row.getCanExpand() ? row.getToggleExpandedHandler() : undefined}
+								style={{
+									cursor: row.getCanExpand() ? "pointer" : undefined,
+								}}
+							>
+								{cell.getIsGrouped() ? (
+									<>
+										{row.getIsExpanded() ? "▽" : "▷"} {flexRender(cell.column.columnDef.cell, cell.getContext())} (
+										{row.subRows.length})
+									</>
+								) : cell.getIsAggregated() ? (
+									flexRender(cell.column.columnDef.aggregatedCell ?? cell.column.columnDef.cell, cell.getContext())
+								) : cell.getIsPlaceholder() ? (
+									<></>
+								) : (
+									flexRender(cell.column.columnDef.cell, cell.getContext())
+								)}
+							</td>
 						))}
 					</tr>
 				))}
