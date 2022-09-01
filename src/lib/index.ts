@@ -85,7 +85,8 @@ export function calculateItemValue(params: {
 	const workshopRankMod = state.xiv.MJICraftWorksRankRatio[workshopRank] / 100;
 
 	// calculate value and amount
-	const amount = efficiencyBonus ? item.ResultAmount * 2 : item.ResultAmount;
+	// you would probably want to use `item.ResultAmount` for the amount, but that columns seems unused and contains wrong data
+	const amount = efficiencyBonus ? 2 : 1;
 	const value = Math.floor(popularityMod * supplyMod * Math.floor(item.Value * workshopRankMod * (1 + groove / 100)));
 
 	return {
