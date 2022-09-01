@@ -85,7 +85,7 @@ export function calculateItemValue(params: {
 	const workshopRankMod = state.xiv.MJICraftWorksRankRatio[workshopRank] / 100;
 
 	// calculate value and amount
-	const amount = efficiencyBonus === true ? 2 : 1;
+	const amount = efficiencyBonus ? item.ResultAmount * 2 : item.ResultAmount;
 	const value = Math.floor(popularityMod * supplyMod * Math.floor(item.Value * workshopRankMod * (1 + groove / 100)));
 
 	return {
@@ -101,13 +101,14 @@ export function calculateItemValue(params: {
 }
 
 function hasEfficiencyBonus(item: MJICraftworksObject, previousItem?: MJICraftworksObject) {
+	const activeTheme: number[] = [];
+	if (previousItem != null && previousItem.Theme0TargetID !== 0) activeTheme.push(previousItem.Theme0TargetID);
+	if (previousItem != null && previousItem.Theme0TargetID !== 0) activeTheme.push(previousItem.Theme0TargetID);
+
 	return (
 		// must be a different item
 		item.ID !== previousItem?.ID &&
 		// at least one theme must be the same
-		(item.Theme0TargetID === previousItem?.Theme0TargetID ||
-			item.Theme0TargetID === previousItem?.Theme1TargetID ||
-			item.Theme1TargetID === previousItem?.Theme0TargetID ||
-			item.Theme1TargetID === previousItem?.Theme1TargetID)
+		(activeTheme.includes(item.Theme0TargetID) || activeTheme.includes(item.Theme1TargetID))
 	);
 }

@@ -4,6 +4,7 @@ export interface MJICraftworksObject {
 	ID: number;
 	CraftingTime: number;
 	Value: number;
+	ResultAmount: number;
 
 	Theme0TargetID: number;
 	Theme0: {
