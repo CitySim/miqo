@@ -144,7 +144,7 @@ export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
 
 	result.items.forEach((itemResult) => {
 		function add(amount: number, item: MJIItemPouch): void {
-			let material = result.material.find((i) => i.item.ID === itemResult.item.Material0?.ID);
+			let material = result.material.find((i) => i.item.ID === item.ID);
 			if (material == null) {
 				material = { item, amount: 0 };
 				result.material.push(material);
