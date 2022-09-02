@@ -2,7 +2,6 @@ import React from "react";
 import {
 	CellContext,
 	ColumnDef,
-	ColumnDefTemplate,
 	createColumnHelper,
 	flexRender,
 	getCoreRowModel,
@@ -16,6 +15,7 @@ import {
 import styled, { css } from "styled-components";
 import { configSlice, MJICraftworksObject, useAppDispatch, useAppSelector } from "../../redux";
 import { MJIItemPouch } from "../../redux/xivSlice";
+import { Material } from "../Material";
 
 export interface GridRow {
 	popularity: number;
@@ -66,37 +66,6 @@ const MaterialCell: React.FC<CellContext<GridRow, GridRow["material0"]>> = funct
 		</>
 	);
 };
-
-const materialGranary = [
-	27, // Island Alyssum
-	28, // Raw Island Garnet
-	29, // Island Spruce Log
-	30, // Island Hammerhead
-	31, // Island Silver Ore
-];
-
-const Material: React.FC<{ item: MJIItemPouch }> = function (props) {
-	const { item } = props;
-
-	return (
-		<>
-			<img src={`https://xivapi.com/${item.Item.Icon}`} style={{ height: "1em" }} />
-			&nbsp;
-			{materialGranary.includes(item.ID) ? <Label>G</Label> : null}
-			{item?.Category.ID === 4 ? <Label>P</Label> : null}
-			{item?.Category.ID === 5 ? <Label>L</Label> : null}
-			&nbsp;
-			{item.Item.Name ?? null}
-		</>
-	);
-};
-
-const Label = styled.span`
-	background-color: #646464;
-	color: white;
-	border-radius: 5px;
-	padding: 1px 4px;
-`;
 
 const columnHelper = createColumnHelper<GridRow>();
 const defaultColumns: ColumnDef<GridRow, any>[] = [

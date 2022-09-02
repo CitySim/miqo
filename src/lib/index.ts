@@ -1,4 +1,4 @@
-import { getPop, store, WorkshopConfig } from "../redux";
+import { getPop, MJIItemPouch, store, WorkshopConfig } from "../redux";
 import { MJICraftworksObject } from "../redux";
 
 export function findItems(workshop: number) {
@@ -44,6 +44,10 @@ export interface WorkshopCalculation {
 		amount: number;
 		value: number;
 	}>;
+	material: Array<{
+		item: MJIItemPouch;
+		amount: number;
+	}>;
 }
 
 export interface WorkshopCalculationHour {
@@ -83,6 +87,7 @@ export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
 			};
 		}),
 		items: [],
+		material: [],
 		hours: [],
 	};
 
@@ -136,6 +141,27 @@ export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
 	}
 
 	result.finalGroove = groove;
+
+	result.items.forEach((itemResult) => {
+		function add(amount: number, item: MJIItemPouch): void {
+			let material = result.material.find((i) => i.item.ID === itemResult.item.Material0?.ID);
+			if (material == null) {
+				material = { item, amount: 0 };
+				result.material.push(material);
+			}
+			material.amount += amount;
+		}
+
+		if (itemResult.item.Amount0 > 0 && itemResult.item.Material0 != null)
+			add(itemResult.item.Amount0, itemResult.item.Material0);
+		if (itemResult.item.Amount1 > 0 && itemResult.item.Material1 != null)
+			add(itemResult.item.Amount1, itemResult.item.Material1);
+		if (itemResult.item.Amount2 > 0 && itemResult.item.Material2 != null)
+			add(itemResult.item.Amount2, itemResult.item.Material2);
+		if (itemResult.item.Amount3 > 0 && itemResult.item.Material3 != null)
+			add(itemResult.item.Amount3, itemResult.item.Material3);
+	});
+
 	return result;
 }
 

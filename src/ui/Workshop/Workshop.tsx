@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { calculate, calculateItemValue, ItemCalculation } from "../../lib";
 import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
+import { Material } from "../Material";
 import { Panel, PanelBody, PanelFooter, PanelHeader } from "../Panel";
 import { Timeline } from "./Timeline";
 
@@ -81,30 +82,66 @@ export const Workshop: React.FC = function Workshop() {
 						<br />
 						<input type="number" value={workshopCalculation.finalGroove} disabled />
 						<br />
+						<hr />
+						<b>Results</b>
 						<table style={{ width: "100%" }}>
 							<thead>
 								<tr>
 									<th>Item</th>
-									<th>Amount</th>
-									<th>Value</th>
+									<th style={{ textAlign: "right" }}>Amount</th>
+									<th style={{ textAlign: "right" }}>Value</th>
 								</tr>
 							</thead>
 							<tbody>
 								{workshopCalculation.items.map((itemResult) => (
 									<tr>
-										<td>{itemResult.item.Item.Name}</td>
-										<td>{itemResult.amount}</td>
-										<td>{itemResult.value}</td>
+										<td>
+											<img src={`https://xivapi.com/${itemResult.item.Item.Icon}`} style={{ height: "1em" }} />
+											&nbsp;
+											{itemResult.item.Item.Name}
+										</td>
+										<td style={{ textAlign: "right" }}>{itemResult.amount}</td>
+										<td style={{ textAlign: "right" }}>
+											{itemResult.value}
+											&nbsp;
+											<img src="https://xivapi.com/i/065000/065096.png" style={{ height: "1em" }} />
+										</td>
 									</tr>
 								))}
 							</tbody>
 							<tfoot>
 								<tr>
 									<td></td>
-									<td></td>
-									<td>{workshopCalculation.value}</td>
+									<td style={{ textAlign: "right" }}>Total</td>
+									<td style={{ textAlign: "right" }}>
+										<b>
+											{workshopCalculation.value}
+											&nbsp;
+											<img src="https://xivapi.com/i/065000/065096.png" style={{ height: "1em" }} />
+										</b>
+									</td>
 								</tr>
 							</tfoot>
+						</table>
+						<hr />
+						<b>Materials</b>
+						<table style={{ width: "100%" }}>
+							<thead>
+								<tr>
+									<th>Item</th>
+									<th style={{ textAlign: "right" }}>Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								{workshopCalculation.material.map((material) => (
+									<tr>
+										<td>
+											<Material item={material.item} />
+										</td>
+										<td style={{ textAlign: "right" }}>{material.amount}</td>
+									</tr>
+								))}
+							</tbody>
 						</table>
 					</PanelBody>
 				</WorkshopContainer>
