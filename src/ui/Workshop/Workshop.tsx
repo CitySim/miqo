@@ -72,6 +72,8 @@ export const Workshop: React.FC = function Workshop() {
 						<br />
 						<input
 							type="number"
+							min={0}
+							max={5 + config.landmarkCount * 10}
 							value={config.groove}
 							onChange={(e) => {
 								dispatch(configSlice.actions.setGroove(parseInt(e.target.value)));

@@ -92,8 +92,9 @@ export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
 	};
 
 	const state = store.getState();
-	let groove = state.config.groove;
 	const maxGroove = 5 + state.config.landmarkCount * 10;
+	let groove = Math.max(0, Math.min(state.config.groove, maxGroove));
+	if (isNaN(groove)) groove = 0;
 
 	// run calculation
 	for (let hour = 0; hour < 24; hour++) {
@@ -200,7 +201,7 @@ export function calculateItemValue(params: {
 
 	// workshop rank
 	const workshopRank = state.config.workshops[workshop].rank;
-	const workshopRankMod = state.xiv.MJICraftWorksRankRatio[workshopRank] / 100;
+	const workshopRankMod = (state.xiv.MJICraftWorksRankRatio[workshopRank] ?? 0) / 100;
 
 	// calculate value and amount
 	// you would probably want to use `item.ResultAmount` for the amount, but that columns seems unused and contains wrong data

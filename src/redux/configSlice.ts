@@ -1,7 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MJICraftworksObject } from "./xivSlice";
 
-export interface CounterState {
+export interface ConfigState {
 	activeWorkshop?: number;
 	groove: number;
 	landmarkCount: number;
@@ -15,7 +15,7 @@ export interface WorkshopConfig {
 	queue: MJICraftworksObject[];
 }
 
-const initialState: CounterState = {
+const initialState: ConfigState = {
 	//popularity: 83,
 	groove: 0,
 	landmarkCount: 3,
