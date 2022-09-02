@@ -30,22 +30,113 @@ export function findItems(workshop: number) {
 }
 
 export interface WorkshopCalculation {
-	groove: number;
+	startingGroove: number;
+	finalGroove: number;
 	value: number;
+
+	hours: WorkshopCalculationHour[];
 	workshops: Array<{
-		workshop: WorkshopConfig;
-		queue: ItemCalculation;
+		value: number;
+		queue: ItemCalculation[];
+	}>;
+	items: Array<{
+		item: MJICraftworksObject;
+		amount: number;
+		value: number;
 	}>;
 }
 
-export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
-	let groove = 0;
+export interface WorkshopCalculationHour {
+	startingGroove: number;
+	finalGroove: number;
+	calculations: Array<ItemCalculation | undefined>;
+}
 
-	return {
-		groove: 0,
+export function calculate(workshops: WorkshopConfig[]): WorkshopCalculation {
+	// build object of what items are crafted at what time
+	const itemByHour = new Map<number, MJICraftworksObject[]>();
+	for (let index = 0; index < workshops.length; index++) {
+		let hour = 0;
+		const workshop = workshops[index];
+
+		workshop.queue.forEach((item) => {
+			let itemList = itemByHour.get(hour);
+			if (itemList == null) {
+				itemList = [];
+				itemByHour.set(hour, itemList);
+			}
+
+			itemList[index] = item;
+			hour += item.CraftingTime;
+		});
+	}
+
+	const result: WorkshopCalculation = {
+		startingGroove: 0,
+		finalGroove: 0,
 		value: 0,
-		workshops: [],
+
+		workshops: workshops.map((workshop) => {
+			return {
+				value: 0,
+				queue: [],
+			};
+		}),
+		items: [],
+		hours: [],
 	};
+
+	const state = store.getState();
+	let groove = state.config.groove;
+	const maxGroove = 5 + state.config.landmarkCount * 10;
+
+	// run calculation
+	for (let hour = 0; hour < 24; hour++) {
+		const items = itemByHour.get(hour) ?? [];
+
+		result.hours[hour] = {
+			startingGroove: groove,
+			finalGroove: 0,
+			calculations: items.map((item, workshop) => {
+				if (item == null) return undefined;
+
+				const workshopResult = result.workshops[workshop];
+				const previousItem = workshopResult.queue[workshopResult.queue.length - 1];
+
+				const calculation = calculateItemValue({
+					workshop: workshop,
+					groove: groove,
+					previousItem: previousItem?.item,
+					item: item,
+				});
+
+				result.value += calculation.valueTotal;
+				workshopResult.value += calculation.valueTotal;
+				workshopResult.queue.push(calculation);
+
+				let itemResult = result.items.find((i) => i.item.ID === item.ID);
+				if (itemResult == null) {
+					itemResult = {
+						item: item,
+						amount: 0,
+						value: 0,
+					};
+					result.items.push(itemResult);
+				}
+
+				itemResult.amount += calculation.amount;
+				itemResult.value += calculation.valueTotal;
+
+				if (calculation.efficiencyBonus) groove = Math.min(groove + 1, maxGroove);
+				return calculation;
+			}),
+		};
+
+		result.hours[hour].finalGroove = groove;
+	}
+
+	result.finalGroove = groove;
+	return result;
 }
 
 export interface ItemCalculation {
@@ -55,6 +146,7 @@ export interface ItemCalculation {
 	popularity: number;
 	efficiencyBonus: boolean;
 
+	amount: number;
 	value: number;
 	valueTotal: number;
 }
@@ -62,7 +154,7 @@ export interface ItemCalculation {
 export function calculateItemValue(params: {
 	workshop: number;
 	item: MJICraftworksObject;
-	previousItem: MJICraftworksObject;
+	previousItem?: MJICraftworksObject;
 	groove: number;
 }): ItemCalculation {
 	const { workshop, item, previousItem, groove } = params;
@@ -96,6 +188,7 @@ export function calculateItemValue(params: {
 		efficiencyBonus: efficiencyBonus,
 		popularity: popularity,
 
+		amount: amount,
 		value: value,
 		valueTotal: amount * value,
 	};

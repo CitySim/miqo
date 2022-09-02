@@ -3,6 +3,8 @@ import { MJICraftworksObject } from "./xivSlice";
 
 export interface CounterState {
 	activeWorkshop?: number;
+	groove: number;
+	landmarkCount: number;
 	//popularity: number;
 	veryHighItems: number[];
 	workshops: WorkshopConfig[];
@@ -15,6 +17,8 @@ export interface WorkshopConfig {
 
 const initialState: CounterState = {
 	//popularity: 83,
+	groove: 0,
+	landmarkCount: 3,
 	veryHighItems: [4, 7, 12],
 	workshops: [
 		{
@@ -36,6 +40,12 @@ export const configSlice = createSlice({
 	name: "config",
 	initialState: initialState,
 	reducers: {
+		setGroove(state, action: PayloadAction<number>) {
+			state.groove = action.payload;
+		},
+		setLandmarkCount(state, action: PayloadAction<number>) {
+			state.landmarkCount = action.payload;
+		},
 		setActiveWorkshop(state, action: PayloadAction<number>) {
 			state.activeWorkshop = action.payload;
 		},

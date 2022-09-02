@@ -3,6 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { calculateItemValue, findItems } from "../../lib";
 import { getPop, useAppSelector } from "../../redux";
+import { elevationColor } from "../Panel";
 
 import { GridRow, ItemTable } from "./ItemTable";
 
@@ -42,8 +43,28 @@ export const AddItem: React.FC = function AddItem() {
 	});
 
 	return (
-		<div style={{ overflow: "auto", flex: 1 }}>
-			<ItemTable data={gridItems} />
-		</div>
+		<>
+			<div
+				style={{
+					backgroundColor: elevationColor(1),
+					borderTop: `1px solid ${elevationColor(2)}`,
+					borderBottom: `1px solid ${elevationColor(2)}`,
+					padding: "8px 16px",
+					margin: "16px 0",
+					cursor: "pointer",
+				}}
+				onClick={(e) => {
+					e.currentTarget.scrollIntoView({
+						block: "start",
+						behavior: "smooth",
+					});
+				}}
+			>
+				<b>Add Item to Workshop {workshop + 1}</b>
+			</div>
+			<div style={{ minHeight: "50vh", overflowX: "auto" }}>
+				<ItemTable data={gridItems} />
+			</div>
+		</>
 	);
 };

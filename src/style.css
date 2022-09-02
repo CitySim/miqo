@@ -1,13 +1,16 @@
 :root {
 	font-family: sans-serif;
+	color-scheme: dark;
 }
 
 * {
 	box-sizing: border-box;
+	scroll-margin-top: 1rem;
 }
 
 body {
 	margin: 0;
-	background: #111111;
+	padding: 16px;
+	background: hsl(0deg 0% 7%);
 	color: #ffffff;
 }
