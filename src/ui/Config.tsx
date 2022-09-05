@@ -57,17 +57,12 @@ export const Config: React.FC = function Config() {
 					<hr />
 					Very High Items:
 					<br />
-					{veryHighItems.map((id, index) => (
+					{[...veryHighItems, 0].map((id, index) => (
 						<React.Fragment key={index}>
 							<ItemSelect value={id} onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index, id }))} />
 							<br />
 						</React.Fragment>
 					))}
-					<ItemSelect
-						value={0}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: veryHighItems.length + 1, id }))}
-					/>
-					<br />
 					<small>
 						You have to choose some items with "Very High" popularity for the calculator to figure out popularity of all
 						items.
