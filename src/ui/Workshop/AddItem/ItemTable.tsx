@@ -13,9 +13,9 @@ import {
 } from "@tanstack/react-table";
 
 import styled, { css } from "styled-components";
-import { configSlice, MJICraftworksObject, useAppDispatch, useAppSelector } from "../../redux";
-import { MJIItemPouch } from "../../redux/xivSlice";
-import { Material } from "../Material";
+import { configSlice, MJICraftworksObject, useAppDispatch, useAppSelector } from "../../../redux";
+import { MJIItemPouch } from "../../../redux/xivSlice";
+import { Material } from "../../Material";
 
 export interface GridRow {
 	popularity: number;

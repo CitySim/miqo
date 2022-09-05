@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { ItemCalculation } from "../../lib";
-import { configSlice, MJICraftworksObject, useAppDispatch } from "../../redux";
-import { Panel, PanelBody, PanelFooter, PanelHeader } from "../Panel";
+import { ItemCalculation } from "../../../lib";
+import { useAppDispatch } from "../../../redux";
+import { Panel, PanelBody, PanelFooter, PanelHeader } from "../../lib";
 
 const popName: Record<number, string> = {
 	1: "Very High",

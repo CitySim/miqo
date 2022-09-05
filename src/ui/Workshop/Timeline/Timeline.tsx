@@ -1,8 +1,4 @@
-import React from "react";
-import styled from "styled-components";
-import { calculateItemValue, ItemCalculation, WorkshopCalculation } from "../../lib";
-import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
-import { MJICraftworksObject } from "../../redux/xivSlice";
+import { WorkshopCalculation } from "../../../lib";
 import { TimelineItem } from "./TImelineItem";
 
 export interface TimelineProps {

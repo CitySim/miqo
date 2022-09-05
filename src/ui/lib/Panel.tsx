@@ -1,11 +1,5 @@
-import styled from "styled-components";
-
-const background = 7;
-export function elevationColor(elevation: number, alpha?: number): string {
-	const b = background + elevation * 4;
-	const a = alpha == null ? "" : ` / ${alpha}`;
-	return `hsl(0deg 0% ${b}%${a})`;
-}
+import styled, { StyledComponent } from "styled-components";
+import { elevationColor } from "./lib";
 
 export const Panel = styled.div<{ elevation: number }>`
 	display: flex;

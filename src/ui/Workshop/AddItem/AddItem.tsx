@@ -1,9 +1,9 @@
 import React from "react";
 
 import { useSelector } from "react-redux";
-import { calculateItemValue, findItems } from "../../lib";
-import { getPop, useAppSelector } from "../../redux";
-import { elevationColor } from "../Panel";
+import { calculateItemValue, findItems } from "../../../lib";
+import { getPop, useAppSelector } from "../../../redux";
+import { Container, elevationColor } from "../../lib";
 
 import { GridRow, ItemTable } from "./ItemTable";
 

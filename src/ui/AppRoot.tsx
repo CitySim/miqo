@@ -1,7 +1,7 @@
 import React from "react";
-import { AddItem } from "./AddItem";
+import { AddItem } from "./Workshop/AddItem";
 import { Config } from "./Config";
-import { elevationColor } from "./Panel";
+import { elevationColor } from "./lib";
 import { Workshop } from "./Workshop";
 
 export const AppRoot: React.FC = function AppRoot() {
@@ -11,10 +11,9 @@ export const AppRoot: React.FC = function AppRoot() {
 		<>
 			<div
 				style={{
-					width: "calc(100% + 32px)",
+					width: "100%",
 					backgroundColor: elevationColor(4),
 					padding: "16px 32px",
-					margin: "-16px -16px 16px -16px",
 					zIndex: 999,
 				}}
 			>
@@ -29,14 +28,7 @@ export const AppRoot: React.FC = function AppRoot() {
 				</button>
 			</div>
 
-			{config ? (
-				<Config />
-			) : (
-				<div style={{ display: "flex", flexFlow: "column" }}>
-					<Workshop />
-					<AddItem />
-				</div>
-			)}
+			{config ? <Config /> : <Workshop />}
 		</>
 	);
 };

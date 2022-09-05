@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { calculate, calculateItemValue, ItemCalculation } from "../../lib";
 import { configSlice, useAppDispatch, useAppSelector } from "../../redux";
 import { Material } from "../Material";
-import { Panel, PanelBody, PanelFooter, PanelHeader } from "../Panel";
+import { Container, Panel, PanelBody, PanelFooter, PanelHeader } from "../lib";
 import { Timeline } from "./Timeline";
+import { AddItem } from "./AddItem";
 
-const WorkshopContainer = styled(Panel)`
-	margin: 5px;
+const WorkshopPanel = styled(Panel)`
 	flex: 1 1 350px;
 	min-width: min(350px, 90vw);
 	max-width: 400px;
@@ -19,13 +19,12 @@ export const Workshop: React.FC = function Workshop() {
 
 	const workshops = useAppSelector((s) => s.config.workshops);
 	const workshopCalculation = calculate(workshops);
-	//console.log("workshopCalculation", workshopCalculation);
 
 	return (
 		<>
-			<div style={{ display: "flex", flexFlow: "row nowrap", overflowY: "auto" }}>
+			<Container style={{ display: "flex", flexFlow: "row nowrap", overflowY: "auto", gap: 16 }}>
 				{workshopCalculation.workshops.map((workshop, index) => (
-					<WorkshopContainer
+					<WorkshopPanel
 						elevation={config.activeWorkshop === index ? 2 : 1}
 						onClick={() => {
 							dispatch(configSlice.actions.setActiveWorkshop(index));
@@ -61,9 +60,9 @@ export const Workshop: React.FC = function Workshop() {
 							<button onClick={() => dispatch(configSlice.actions.clearQueue(index))}>clear</button>
 							<button onClick={() => dispatch(configSlice.actions.removeFromQueue(index))}>remove last</button>
 						</PanelFooter>
-					</WorkshopContainer>
+					</WorkshopPanel>
 				))}
-				<WorkshopContainer elevation={1}>
+				<WorkshopPanel elevation={1}>
 					<PanelHeader elevation={1}>
 						<b>Results</b>
 					</PanelHeader>
@@ -146,8 +145,9 @@ export const Workshop: React.FC = function Workshop() {
 							</tbody>
 						</table>
 					</PanelBody>
-				</WorkshopContainer>
-			</div>
+				</WorkshopPanel>
+			</Container>
+			<AddItem />
 		</>
 	);
 };
