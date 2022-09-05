@@ -10,6 +10,7 @@ const popName: Record<number, string> = {
 	3: "Average",
 	4: "Low",
 };
+
 const TimelinePanel = styled(Panel)`
 	width: 100%;
 	height: 100%;

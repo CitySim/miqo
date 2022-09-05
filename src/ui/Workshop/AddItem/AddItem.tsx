@@ -2,14 +2,14 @@ import React from "react";
 
 import { useSelector } from "react-redux";
 import { calculateItemValue, findItems } from "../../../lib";
-import { getPop, useAppSelector } from "../../../redux";
+import { getPopularity, useAppSelector } from "../../../redux";
 import { Container, elevationColor } from "../../lib";
 
 import { GridRow, ItemTable } from "./ItemTable";
 
 export const AddItem: React.FC = function AddItem() {
 	const config = useAppSelector((s) => s.config);
-	const popMatrix = useSelector(getPop);
+	const popMatrix = useSelector(getPopularity);
 
 	if (config.activeWorkshop == null) {
 		return <div />;

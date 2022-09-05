@@ -1,4 +1,4 @@
-import { getPop, MJIItemPouch, store, WorkshopConfig } from "../redux";
+import { getPopularity, MJIItemPouch, store, WorkshopConfig } from "../redux";
 import { MJICraftworksObject } from "../redux";
 
 export function findItems(workshop: number) {
@@ -187,7 +187,7 @@ export function calculateItemValue(params: {
 	const { workshop, item, previousItem, groove } = params;
 
 	const state = store.getState();
-	const popularityMatrix = getPop(state);
+	const popularityMatrix = getPopularity(state);
 
 	// efficiency bonus
 	const efficiencyBonus = hasEfficiencyBonus(item, previousItem);

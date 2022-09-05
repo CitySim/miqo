@@ -1,12 +1,30 @@
 import React from "react";
-import { configSlice, useAppDispatch, useAppSelector } from "../redux";
+import { useSelector } from "react-redux";
+import { configSlice, getPopularity, useAppDispatch, useAppSelector } from "../redux";
 import { ItemSelect } from "./ItemSelect";
 import { Container, Panel, PanelBody, PanelFooter, PanelHeader } from "./lib";
 
+const popName: Record<number, string> = {
+	1: "Very High",
+	2: "High",
+	3: "Average",
+	4: "Low",
+};
+
 export const Config: React.FC = function Config() {
+	const popularity = useSelector(getPopularity);
 	const landmarkCount = useAppSelector((s) => s.config.landmarkCount);
+	const popularityRow = useAppSelector((s) => s.config.popularityRow);
 	const veryHighItems = useAppSelector((s) => s.config.veryHighItems);
+	const MJICraftworksObject = useAppSelector((s) => s.xiv.MJICraftworksObject);
+	const MJICraftWorksPopularity = useAppSelector((s) => s.xiv.MJICraftWorksPopularity);
 	const dispatch = useAppDispatch();
+
+	const matrixList = React.useMemo(() => {
+		return Object.entries(MJICraftWorksPopularity).filter(([index, popMatrix]) => {
+			return veryHighItems.every((item) => item === 0 || item == null || popMatrix[item] === 1);
+		});
+	}, veryHighItems);
 
 	return (
 		<Container>
@@ -65,7 +83,48 @@ export const Config: React.FC = function Config() {
 					<br />
 					<small>
 						You have to choose some items with "Very High" popularity for the calculator to figure out popularity of all
-						items. You shouldn't need to touch it, it's a bit weird right now.
+						items.
+						<br />
+						{matrixList.length === 0 ? (
+							"Found no possible match, please check your selection"
+						) : matrixList.length === 1 ? (
+							<>
+								Found a match <br />
+								<button onClick={() => dispatch(configSlice.actions.setPopularityRow(parseInt(matrixList[0][0])))}>
+									apply popularity
+								</button>
+							</>
+						) : (
+							<>Found {matrixList.length} matches, please select more items so narrow down your selection</>
+						)}
+						<div style={{ maxHeight: 400, overflowY: "auto" }}>
+							<table>
+								<thead>
+									<tr>
+										<th>Item</th>
+										<th>Current (row {popularityRow})</th>
+										<th>{matrixList.length === 1 ? <tr>New Match (row {matrixList[0][0]})</tr> : null}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{MJICraftworksObject.filter((i) => i.Item != null).map((item) => (
+										<tr>
+											<td style={{ padding: 1 }}>
+												<img src={`https://xivapi.com/${item.Item.Icon}`} style={{ height: "1em" }} />
+												&nbsp;
+												{item.Item.Name}
+											</td>
+											<td style={{ padding: 1 }}>{popName[popularity[item.ID]] ?? popularity[popularity[item.ID]]}</td>
+											{matrixList.length === 1 ? (
+												<td style={{ padding: 1 }}>
+													{popName[matrixList[0][1][item.ID]] ?? matrixList[0][1][item.ID]}
+												</td>
+											) : null}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
 					</small>
 					<hr />
 					<ul>

@@ -5,7 +5,7 @@ export interface ConfigState {
 	activeWorkshop?: number;
 	groove: number;
 	landmarkCount: number;
-	//popularity: number;
+	popularityRow: number;
 	veryHighItems: number[];
 	workshops: WorkshopConfig[];
 }
@@ -16,7 +16,7 @@ export interface WorkshopConfig {
 }
 
 const initialState: ConfigState = {
-	//popularity: 83,
+	popularityRow: 83,
 	groove: 0,
 	landmarkCount: 3,
 	veryHighItems: [4, 7, 12],
@@ -40,6 +40,9 @@ export const configSlice = createSlice({
 	name: "config",
 	initialState: initialState,
 	reducers: {
+		setPopularityRow(state, action: PayloadAction<number>) {
+			state.popularityRow = action.payload;
+		},
 		setGroove(state, action: PayloadAction<number>) {
 			state.groove = action.payload;
 		},
