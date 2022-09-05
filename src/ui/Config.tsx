@@ -20,11 +20,12 @@ export const Config: React.FC = function Config() {
 	const MJICraftWorksPopularity = useAppSelector((s) => s.xiv.MJICraftWorksPopularity);
 	const dispatch = useAppDispatch();
 
+	console.log("veryHighItems", veryHighItems);
 	const matrixList = React.useMemo(() => {
 		return Object.entries(MJICraftWorksPopularity).filter(([index, popMatrix]) => {
 			return veryHighItems.every((item) => item === 0 || item == null || popMatrix[item] === 1);
 		});
-	}, veryHighItems);
+	}, [veryHighItems.join()]);
 
 	return (
 		<Container>
@@ -56,29 +57,15 @@ export const Config: React.FC = function Config() {
 					<hr />
 					Very High Items:
 					<br />
+					{veryHighItems.map((id, index) => (
+						<React.Fragment key={index}>
+							<ItemSelect value={id} onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index, id }))} />
+							<br />
+						</React.Fragment>
+					))}
 					<ItemSelect
-						value={veryHighItems[0]}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: 0, id }))}
-					/>
-					<br />
-					<ItemSelect
-						value={veryHighItems[1]}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: 1, id }))}
-					/>
-					<br />
-					<ItemSelect
-						value={veryHighItems[2]}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: 2, id }))}
-					/>
-					<br />
-					<ItemSelect
-						value={veryHighItems[3]}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: 3, id }))}
-					/>
-					<br />
-					<ItemSelect
-						value={veryHighItems[4]}
-						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: 4, id }))}
+						value={0}
+						onChange={(id) => dispatch(configSlice.actions.setVeryHighItem({ index: veryHighItems.length + 1, id }))}
 					/>
 					<br />
 					<small>
@@ -86,7 +73,7 @@ export const Config: React.FC = function Config() {
 						items.
 						<br />
 						{matrixList.length === 0 ? (
-							"Found no possible match, please check your selection"
+							<>Found no possible match, please check your selection</>
 						) : matrixList.length === 1 ? (
 							<>
 								Found a match <br />
@@ -103,12 +90,12 @@ export const Config: React.FC = function Config() {
 									<tr>
 										<th>Item</th>
 										<th>Current (row {popularityRow})</th>
-										<th>{matrixList.length === 1 ? <tr>New Match (row {matrixList[0][0]})</tr> : null}</th>
+										<th>{matrixList.length === 1 ? <>New Match (row {matrixList[0][0]})</> : null}</th>
 									</tr>
 								</thead>
 								<tbody>
 									{MJICraftworksObject.filter((i) => i.Item != null).map((item) => (
-										<tr>
+										<tr key={item.ID}>
 											<td style={{ padding: 1 }}>
 												<img src={`https://xivapi.com/${item.Item.Icon}`} style={{ height: "1em" }} />
 												&nbsp;

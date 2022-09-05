@@ -57,6 +57,7 @@ export const configSlice = createSlice({
 		},
 		setVeryHighItem(state, action: PayloadAction<{ index: number; id: number }>) {
 			state.veryHighItems[action.payload.index] = action.payload.id;
+			state.veryHighItems = state.veryHighItems.filter((i) => i != null && i !== 0);
 		},
 		clearQueue(state, action: PayloadAction<number>) {
 			state.workshops[action.payload].queue = [];

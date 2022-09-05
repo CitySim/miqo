@@ -25,6 +25,7 @@ export const Workshop: React.FC = function Workshop() {
 			<Container style={{ display: "flex", flexFlow: "row nowrap", overflowY: "auto", gap: 16 }}>
 				{workshopCalculation.workshops.map((workshop, index) => (
 					<WorkshopPanel
+						key={index}
 						elevation={config.activeWorkshop === index ? 2 : 1}
 						onClick={() => {
 							dispatch(configSlice.actions.setActiveWorkshop(index));
