@@ -1,5 +1,4 @@
 import React from "react";
-import { AddItem } from "./Workshop/AddItem";
 import { Config } from "./Config";
 import { elevationColor } from "./lib";
 import { Workshop } from "./Workshop";

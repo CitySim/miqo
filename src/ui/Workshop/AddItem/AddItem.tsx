@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { calculateItemValue, findItems } from "../../../lib";
 import { getPopularity, useAppSelector } from "../../../redux";
-import { Container, elevationColor } from "../../lib";
+import { elevationColor } from "../../lib";
 
 import { GridRow, ItemTable } from "./ItemTable";
 

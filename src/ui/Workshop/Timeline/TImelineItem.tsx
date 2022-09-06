@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { ItemCalculation } from "../../../lib";
-import { useAppDispatch } from "../../../redux";
 import { Panel, PanelBody, PanelFooter, PanelHeader } from "../../lib";
 
 const popName: Record<number, string> = {
@@ -23,9 +22,8 @@ export interface TimelineItemProps {
 }
 
 export const TimelineItem: React.FC<TimelineItemProps> = function TimelineItem(props) {
-	const { calculation, workshop } = props;
+	const { calculation } = props;
 	const { item, efficiencyBonus, valueTotal, popularity, groove } = calculation;
-	const dispatch = useAppDispatch();
 
 	return (
 		<TimelinePanel elevation={props.elevation}>

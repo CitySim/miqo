@@ -1,4 +1,4 @@
-import styled, { StyledComponent } from "styled-components";
+import styled from "styled-components";
 import { elevationColor } from "./lib";
 
 export const Panel = styled.div<{ elevation: number }>`
