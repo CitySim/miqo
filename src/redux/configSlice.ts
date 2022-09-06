@@ -1,4 +1,4 @@
-import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MJICraftworksObject } from "./xivSlice";
 
 export interface ConfigState {
@@ -16,10 +16,12 @@ export interface WorkshopConfig {
 }
 
 const initialState: ConfigState = {
-	popularityRow: 83,
+	// 30-08-2022T08:00 - 83
+	// 06-09-2022T08:00 - 31
+	popularityRow: 31,
 	groove: 0,
 	landmarkCount: 3,
-	veryHighItems: [4, 7, 12],
+	veryHighItems: [],
 	workshops: [
 		{
 			rank: 3,
